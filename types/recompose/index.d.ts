@@ -15,7 +15,7 @@ declare module 'recompose' {
     import * as React from 'react';
     import { ComponentType as Component, ComponentClass, StatelessComponent, ValidationMap } from 'react';
 
-    type mapper<TInner, TOutter> = (input: TInner) => TOutter;
+    type mapper<TInner, TOuter> = (input: TInner) => TOuter;
     type predicate<T> = mapper<T, boolean>;
     type predicateDiff<T> = (current: T, next: T) => boolean
 
@@ -35,8 +35,8 @@ declare module 'recompose' {
         subscribe(observer: Observer<T>): Subscription;
     }
 
-    interface ComponentEnhancer<TInner, TOutter> {
-        (component: Component<TInner>): ComponentClass<TOutter>;
+    interface ComponentEnhancer<TInner, TOuter> {
+        (component: Component<TInner>): ComponentClass<TOuter>;
     }
 
     // Injects props and removes them from the prop requirements.
@@ -62,42 +62,42 @@ declare module 'recompose' {
     // Higher-order components: https://github.com/acdlite/recompose/blob/master/docs/API.md#higher-order-components
 
     // mapProps: https://github.com/acdlite/recompose/blob/master/docs/API.md#mapprops
-    export function mapProps<TInner, TOutter>(
-        propsMapper: mapper<TOutter, TInner>,
-    ): InferableComponentEnhancerWithProps<TInner, TOutter>;
+    export function mapProps<TInner, TOuter>(
+        propsMapper: mapper<TOuter, TInner>,
+    ): InferableComponentEnhancerWithProps<TInner, TOuter>;
 
     // withProps: https://github.com/acdlite/recompose/blob/master/docs/API.md#withprops
-    export function withProps<TInner, TOutter>(
-        createProps: TInner | mapper<TOutter, TInner>
-    ): InferableComponentEnhancerWithProps<TInner & TOutter, TOutter>;
+    export function withProps<TInner, TOuter>(
+        createProps: TInner | mapper<TOuter, TInner>
+    ): InferableComponentEnhancerWithProps<TInner & TOuter, TOuter>;
 
     // withPropsOnChange: https://github.com/acdlite/recompose/blob/master/docs/API.md#withpropsonchange
-    export function withPropsOnChange<TInner, TOutter>(
-        shouldMapOrKeys: string[] | predicateDiff<TOutter>,
-        createProps: mapper<TOutter, TInner>
-    ): InferableComponentEnhancerWithProps<TInner & TOutter, TOutter>;
+    export function withPropsOnChange<TInner, TOuter>(
+        shouldMapOrKeys: string[] | predicateDiff<TOuter>,
+        createProps: mapper<TOuter, TInner>
+    ): InferableComponentEnhancerWithProps<TInner & TOuter, TOuter>;
 
     // withHandlers: https://github.com/acdlite/recompose/blob/master/docs/API.md#withhandlers
     type EventHandler = Function;
-    // This type is required to infer TOutter
-    type HandleCreatorsStructure<TOutter> = {
-        [handlerName: string]: mapper<TOutter, EventHandler>;
+    // This type is required to infer TOuter
+    type HandleCreatorsStructure<TOuter> = {
+        [handlerName: string]: mapper<TOuter, EventHandler>;
     };
     // This type is required to infer THandlers
-    type HandleCreatorsHandlers<TOutter, THandlers> = {
-        [P in keyof THandlers]: (props: TOutter) => THandlers[P];
+    type HandleCreatorsHandlers<TOuter, THandlers> = {
+        [P in keyof THandlers]: (props: TOuter) => THandlers[P];
     };
-    type HandleCreators<TOutter, THandlers> =
-        & HandleCreatorsStructure<TOutter>
-        & HandleCreatorsHandlers<TOutter, THandlers>
-    type HandleCreatorsFactory<TOutter, THandlers> = (initialProps: TOutter) =>
-        HandleCreators<TOutter, THandlers>;
+    type HandleCreators<TOuter, THandlers> =
+        & HandleCreatorsStructure<TOuter>
+        & HandleCreatorsHandlers<TOuter, THandlers>
+    type HandleCreatorsFactory<TOuter, THandlers> = (initialProps: TOuter) =>
+        HandleCreators<TOuter, THandlers>;
 
-    export function withHandlers<TOutter, THandlers>(
+    export function withHandlers<TOuter, THandlers>(
         handlerCreators:
-            | HandleCreators<TOutter, THandlers>
-            | HandleCreatorsFactory<TOutter, THandlers>
-    ): InferableComponentEnhancerWithProps<THandlers & TOutter, TOutter>;
+            | HandleCreators<TOuter, THandlers>
+            | HandleCreatorsFactory<TOuter, THandlers>
+    ): InferableComponentEnhancerWithProps<THandlers & TOuter, TOuter>;
 
     // defaultProps: https://github.com/acdlite/recompose/blob/master/docs/API.md#defaultprops
     export function defaultProps<T = {}>(
@@ -106,12 +106,12 @@ declare module 'recompose' {
 
     // renameProp: https://github.com/acdlite/recompose/blob/master/docs/API.md#renameProp
     export function renameProp(
-        outterName: string, innerName: string
+        outerName: string, innerName: string
     ): ComponentEnhancer<any, any>;
 
     // renameProps: https://github.com/acdlite/recompose/blob/master/docs/API.md#renameProps
     type NameMap = {
-        [outterName: string]: string;
+        [outerName: string]: string;
     };
     export function renameProps(
         nameMap: NameMap
@@ -132,17 +132,17 @@ declare module 'recompose' {
         {[stateUpdateName in TStateUpdaterName]: (state: TState) => TState}
     )
     export function withState<
-        TOutter,
+        TOuter,
         TState,
         TStateName extends string,
         TStateUpdaterName extends string
     >(
         stateName: TStateName,
         stateUpdaterName: TStateUpdaterName,
-        initialState: TState | mapper<TOutter, TState>
+        initialState: TState | mapper<TOuter, TState>
     ): InferableComponentEnhancerWithProps<
         stateProps<TState, TStateName, TStateUpdaterName>,
-        TOutter
+        TOuter
     >;
 
     // withStateHandlers: https://github.com/acdlite/recompose/blob/master/docs/API.md#withstatehandlers
@@ -150,13 +150,13 @@ declare module 'recompose' {
     type StateHandlerMap<TState> = {
       [updaterName: string]: StateHandler<TState>;
     };
-    type StateUpdaters<TOutter, TState, TUpdaters> = {
-      [updaterName in keyof TUpdaters]: (state: TState, props: TOutter) => StateHandler<TState>;
+    type StateUpdaters<TOuter, TState, TUpdaters> = {
+      [updaterName in keyof TUpdaters]: (state: TState, props: TOuter) => StateHandler<TState>;
     };
-    export function withStateHandlers<TState, TUpdaters extends StateHandlerMap<TState>, TOutter = {}>(
-      createProps: TState | mapper<TOutter, TState>,
-      stateUpdaters: StateUpdaters<TOutter, TState, TUpdaters>,
-    ): InferableComponentEnhancerWithProps<TOutter & TState & TUpdaters, TOutter>;
+    export function withStateHandlers<TState, TUpdaters extends StateHandlerMap<TState>, TOuter = {}>(
+      createProps: TState | mapper<TOuter, TState>,
+      stateUpdaters: StateUpdaters<TOuter, TState, TUpdaters>,
+    ): InferableComponentEnhancerWithProps<TOuter & TState & TUpdaters, TOuter>;
 
     // withReducer: https://github.com/acdlite/recompose/blob/master/docs/API.md#withReducer
     type reducer<TState, TAction> = (s: TState, a: TAction) => TState;
@@ -170,7 +170,7 @@ declare module 'recompose' {
         {[dispatchName in TDispatchName]: (a: TAction) => void}
     )
     export function withReducer<
-        TOutter,
+        TOuter,
         TState,
         TAction,
         TStateName extends string,
@@ -179,18 +179,18 @@ declare module 'recompose' {
         stateName: TStateName,
         dispatchName: TDispatchName,
         reducer: reducer<TState, TAction>,
-        initialState: TState | mapper<TOutter, TState>
+        initialState: TState | mapper<TOuter, TState>
     ): InferableComponentEnhancerWithProps<
         reducerProps<TState, TAction, TStateName, TDispatchName>,
-        TOutter
+        TOuter
     >;
 
     // branch: https://github.com/acdlite/recompose/blob/master/docs/API.md#branch
-    export function branch<TOutter>(
-        test: predicate<TOutter>,
+    export function branch<TOuter>(
+        test: predicate<TOuter>,
         trueEnhancer: ComponentEnhancer<any, any> | InferableComponentEnhancer<{}>,
         falseEnhancer?: ComponentEnhancer<any, any> | InferableComponentEnhancer<{}>
-    ): ComponentEnhancer<any, TOutter>;
+    ): ComponentEnhancer<any, TOuter>;
 
     // renderComponent: https://github.com/acdlite/recompose/blob/master/docs/API.md#renderComponent
     export function renderComponent<TProps>(
@@ -269,30 +269,30 @@ declare module 'recompose' {
     // Static property helpers: https://github.com/acdlite/recompose/blob/master/docs/API.md#static-property-helpers
 
     // setStatic: https://github.com/acdlite/recompose/blob/master/docs/API.md#setStatic
-    export function setStatic<TOutter>(
+    export function setStatic<TOuter>(
         key: string, value: any
-    ): ComponentEnhancer<TOutter, TOutter>;
+    ): ComponentEnhancer<TOuter, TOuter>;
 
     // setPropTypes: https://github.com/acdlite/recompose/blob/master/docs/API.md#setPropTypes
-    export function setPropTypes<TOutter>(
-        propTypes: ValidationMap<TOutter>
-    ): ComponentEnhancer<any, TOutter>;
+    export function setPropTypes<TOuter>(
+        propTypes: ValidationMap<TOuter>
+    ): ComponentEnhancer<any, TOuter>;
 
     // setDisplayName: https://github.com/acdlite/recompose/blob/master/docs/API.md#setDisplayName
-    export function setDisplayName<TOutter>(
+    export function setDisplayName<TOuter>(
         displayName: string
-    ): ComponentEnhancer<TOutter, TOutter>;
+    ): ComponentEnhancer<TOuter, TOuter>;
 
 
     // Utilities: https://github.com/acdlite/recompose/blob/master/docs/API.md#utilities
 
     // compose: https://github.com/acdlite/recompose/blob/master/docs/API.md#compose
-    export function compose<TInner, TOutter>(
+    export function compose<TInner, TOuter>(
         ...functions: Function[]
-    ): ComponentEnhancer<TInner, TOutter>;
-    // export function compose<TOutter>(
+    ): ComponentEnhancer<TInner, TOuter>;
+    // export function compose<TOuter>(
     //     ...functions: Array<Function>
-    // ): ComponentEnhancer<any, TOutter>;
+    // ): ComponentEnhancer<any, TOuter>;
     // export function compose(
     //     ...functions: Array<Function>
     // ): ComponentEnhancer<any, any>;
@@ -366,14 +366,14 @@ declare module 'recompose' {
     ) => Component<TProps>
 
     // mapPropsStream: https://github.com/acdlite/recompose/blob/master/docs/API.md#mapPropsStream
-    export function mapPropsStream<TInner, TOutter>(
-        transform: mapper<Subscribable<TOutter>, Subscribable<TInner>>
-    ): ComponentEnhancer<TInner, TOutter>;
+    export function mapPropsStream<TInner, TOuter>(
+        transform: mapper<Subscribable<TOuter>, Subscribable<TInner>>
+    ): ComponentEnhancer<TInner, TOuter>;
 
     // mapPropsStreamWithConfig: https://github.com/acdlite/recompose/blob/master/docs/API.md#mappropsstreamwithconfig
-    export function mapPropsStreamWithConfig(config: ObservableConfig): <TInner, TOutter> (
-        transform: mapper<Subscribable<TOutter>, Subscribable<TInner>>
-    ) => ComponentEnhancer<TInner, TOutter>;
+    export function mapPropsStreamWithConfig(config: ObservableConfig): <TInner, TOuter> (
+        transform: mapper<Subscribable<TOuter>, Subscribable<TInner>>
+    ) => ComponentEnhancer<TInner, TOuter>;
 
     // createEventHandler: https://github.com/acdlite/recompose/blob/master/docs/API.md#createEventHandler
     type EventHandlerOf<T, TSubs extends Subscribable<T>> = {

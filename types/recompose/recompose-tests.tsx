@@ -72,10 +72,10 @@ function testMapProps() {
         inn: number
         other: string
      }
-    interface OutterProps { out: string }
+    interface OuterProps { out: string }
     const InnerComponent = ({inn}: InnerProps) => <div>{inn}</div>;
 
-    const enhancer = mapProps((props: OutterProps) => ({ inn: 123 }));
+    const enhancer = mapProps((props: OuterProps) => ({ inn: 123 }));
     const Enhanced = enhancer(InnerComponent);
     const rendered = (
         <Enhanced
@@ -87,10 +87,10 @@ function testMapProps() {
 
 function testWithProps() {
     interface InnerProps { inn: number }
-    interface OutterProps { out: number }
+    interface OuterProps { out: number }
     const InnerComponent = ({inn}: InnerProps) => <div>{inn}</div>;
 
-    const enhancer = withProps((props: OutterProps) => ({ inn: props.out }));
+    const enhancer = withProps((props: OuterProps) => ({ inn: props.out }));
     const Enhanced = enhancer(InnerComponent);
     const rendered = (
         <Enhanced out={123}/>
@@ -105,10 +105,10 @@ function testWithProps() {
 
 function testWithPropsOnChange() {
     interface InnerProps { inn: number }
-    interface OutterProps { out: number }
+    interface OuterProps { out: number }
     const InnerComponent = ({inn}: InnerProps) => <div>{inn}</div>;
 
-    const enhancer = withProps((props: OutterProps) => ({ inn: props.out }));
+    const enhancer = withProps((props: OuterProps) => ({ inn: props.out }));
     const Enhanced = enhancer(InnerComponent);
     const rendered = (
         <Enhanced out={123}/>
@@ -122,7 +122,7 @@ function testWithPropsOnChange() {
 }
 
 function testWithHandlers() {
-    interface OutterProps {
+    interface OuterProps {
         out: number;
     }
     interface InnerProps {
@@ -132,10 +132,10 @@ function testWithHandlers() {
         onSubmit: React.MouseEventHandler<HTMLDivElement>;
         onChange: Function;
     }
-    const InnerComponent: React.StatelessComponent<InnerProps & HandlerProps & OutterProps> = ({onChange, onSubmit, foo}) =>
+    const InnerComponent: React.StatelessComponent<InnerProps & HandlerProps & OuterProps> = ({onChange, onSubmit, foo}) =>
       <div onClick={onSubmit}>{foo}</div>;
 
-    const enhancer = withHandlers<OutterProps & InnerProps, HandlerProps>({
+    const enhancer = withHandlers<OuterProps & InnerProps, HandlerProps>({
       onChange: (props) => (e: any) => {},
       onSubmit: (props) => (e: React.MouseEvent<any>) => {},
     });
@@ -147,7 +147,7 @@ function testWithHandlers() {
         />
     )
 
-    const enhancer2 = withHandlers<OutterProps & InnerProps, HandlerProps>((props) => ({
+    const enhancer2 = withHandlers<OuterProps & InnerProps, HandlerProps>((props) => ({
       onChange: (props) => (e: any) => {},
       onSubmit: (props) => (e: React.MouseEvent<any>) => {},
     }));
@@ -159,15 +159,15 @@ function testWithHandlers() {
         />
     )
 
-    const handlerNameTypecheckProof = withHandlers<OutterProps, HandlerProps>({ // $ExpectError
+    const handlerNameTypecheckProof = withHandlers<OuterProps, HandlerProps>({ // $ExpectError
       onChange: () => () => {},
       notAKeyOnHandlerProps: () => () => {},
     });
 
     // The inner props should be fully inferrable
     const enhancer3 = withHandlers({
-      onChange: (props: OutterProps) => (e: any) => {},
-      onSubmit: (props: OutterProps) => (e: React.MouseEvent<any>) => {},
+      onChange: (props: OuterProps) => (e: any) => {},
+      onSubmit: (props: OuterProps) => (e: React.MouseEvent<any>) => {},
     });
     const Enhanced3 = enhancer3(({onChange, onSubmit, out}) =>
         <div onClick={onSubmit}>{out}</div>);
@@ -177,7 +177,7 @@ function testWithHandlers() {
         />
     )
 
-    const enhancer4 = withHandlers((props: OutterProps) => ({
+    const enhancer4 = withHandlers((props: OuterProps) => ({
       onChange: (props) => (e: any) => {},
       onSubmit: (props) => (e: React.MouseEvent<any>) => {},
     }));
@@ -203,41 +203,41 @@ function testDefaultProps() {
 
 function testRenameProp() {
     interface InnerProps { c: string; b: number; }
-    interface OutterProps { a: string; b: number; }
+    interface OuterProps { a: string; b: number; }
     const innerComponent: React.StatelessComponent<InnerProps> = ({c, b}: InnerProps) => <div>{c}, {b}</div>;
 
     const enhancer = renameProp("a", "c");
-    const enhanced: React.ComponentClass<OutterProps> = enhancer(innerComponent);
+    const enhanced: React.ComponentClass<OuterProps> = enhancer(innerComponent);
 }
 
 function testRenameProps() {
     interface InnerProps { c: string; d: number; }
-    interface OutterProps { a: string; b: number; }
+    interface OuterProps { a: string; b: number; }
     const innerComponent: React.StatelessComponent<InnerProps> = ({c, d}: InnerProps) => <div>{c}, {d}</div>;
 
     const enhancer = renameProps({ a:"c", b: "d" });
-    const enhanced: React.ComponentClass<OutterProps> = enhancer(innerComponent);
+    const enhanced: React.ComponentClass<OuterProps> = enhancer(innerComponent);
 }
 
 function testFlattenProp() {
     interface InnerProps { a: string; b: string; y: {c: string; d: number;} }
-    interface OutterProps { x: {a: string; b: number;}; y: {c: string; d: number;} }
+    interface OuterProps { x: {a: string; b: number;}; y: {c: string; d: number;} }
     const innerComponent: React.StatelessComponent<InnerProps> = (props: InnerProps) => <div></div>;
 
     const enhancer = flattenProp("x");
-    const enhanced: React.ComponentClass<OutterProps> = enhancer(innerComponent);
+    const enhanced: React.ComponentClass<OuterProps> = enhancer(innerComponent);
 }
 
 function testWithState() {
     interface InnerProps { count: number; setCount: (count: number) => number }
-    interface OutterProps { title: string }
+    interface OuterProps { title: string }
     const InnerComponent: React.StatelessComponent<InnerProps> = (props) =>
       <div onClick={() => props.setCount(0)}></div>;
 
-    // We can't infer types for TOutter with this form because
+    // We can't infer types for TOuter with this form because
     // Typescript only allows all or nothing
     // when defining generics. You can't infer some and define other.
-    // For TOutter to be defined as not "{}" we would have to define
+    // For TOuter to be defined as not "{}" we would have to define
     // all the generics.
     const enhancer = withState("count", "setCount", 0);
     const Enhanced = enhancer(InnerComponent);
@@ -245,17 +245,17 @@ function testWithState() {
         <Enhanced />
     );
 
-    // Here we're able to infer TOutter since it's defined in the initial state
+    // Here we're able to infer TOuter since it's defined in the initial state
     // function and Typescript is able to infer it from there.
     const enhancer2 = withState("count", "setCount",
-      (p: OutterProps) => p.title.length);
+      (p: OuterProps) => p.title.length);
     const Enhanced2 = enhancer2(InnerComponent);
     const rendered2 = (
         <Enhanced2 title="foo" />
     );
 
     // We can also actually provide the generic necessary
-    const enhancer3 = withState<OutterProps, number, "count", "setCount">("count", "setCount", 1);
+    const enhancer3 = withState<OuterProps, number, "count", "setCount">("count", "setCount", 1);
     const Enhanced3 = enhancer3(props => {
         return <div>{props.count}</div>;
     });
@@ -269,8 +269,8 @@ function testWithStateHandlers() {
     interface Updaters extends StateHandlerMap<State> {
       add: StateHandler<State>;
     }
-    interface OutterProps { initialCounter: number, power: number }
-    type InnerProps = State & Updaters & OutterProps;
+    interface OuterProps { initialCounter: number, power: number }
+    type InnerProps = State & Updaters & OuterProps;
     const InnerComponent: React.StatelessComponent<InnerProps> = (props) =>
         <div>
             <div>{`Initial counter: ${props.initialCounter}`}</div>
@@ -278,8 +278,8 @@ function testWithStateHandlers() {
             <div onClick={() => props.add(2)}></div>
         </div>;
 
-    const enhancer = withStateHandlers<State, Updaters, OutterProps>(
-        (props: OutterProps) => ({ counter: props.initialCounter }),
+    const enhancer = withStateHandlers<State, Updaters, OuterProps>(
+        (props: OuterProps) => ({ counter: props.initialCounter }),
         {
             add: (state, props) => n => ({ ...state, counter: state.counter + n ** props.power }),
         },
@@ -289,14 +289,14 @@ function testWithStateHandlers() {
         <Enhanced initialCounter={4} power={2} />
     );
 
-    const updateNameTypecheckProof = withStateHandlers<State, Updaters, OutterProps>(
-        (props: OutterProps) => ({ counter: props.initialCounter }),
+    const updateNameTypecheckProof = withStateHandlers<State, Updaters, OuterProps>(
+        (props: OuterProps) => ({ counter: props.initialCounter }),
         { notAKeyOfUpdaters: (state, props) => n => ({ ...state, counter: state.counter + n ** props.power }), }, // $ExpectError
     );
 
     // The inner props should be fully inferrable
     const enhancer2 = withStateHandlers(
-        (props: OutterProps) => ({ counter: props.initialCounter }),
+        (props: OuterProps) => ({ counter: props.initialCounter }),
         {
             add: (state, props) => n => ({ ...state, counter: state.counter + n ** props.power }),
         },
@@ -316,11 +316,11 @@ function testWithReducer() {
     interface State { count: number }
     interface Action { type: string }
     interface InnerProps { title: string; count: number; dispatch: (a: Action) => void; }
-    interface OutterProps { title: string; bar: number; }
+    interface OuterProps { title: string; bar: number; }
     const InnerComponent: React.StatelessComponent<InnerProps> = (props) =>
       <div onClick={() => props.dispatch({type: "INCREMENT"})}></div>;
 
-    // Same issue here inferring TOutter as with the "withState" form.
+    // Same issue here inferring TOuter as with the "withState" form.
     const enhancer = withReducer("count", "dispatch",
       (s: number, a: Action) => s + 1, 0);
     const Enhanced = enhancer(InnerComponent);
@@ -328,10 +328,10 @@ function testWithReducer() {
         <Enhanced title="foo"/>
     );
 
-    // Here we successfully infer TOutter from the initial state function
+    // Here we successfully infer TOuter from the initial state function
     const enhancer2 = withReducer("count", "dispatch",
       (s: number, a: Action) => s + 1,
-      (props: OutterProps) => props.title.length);
+      (props: OuterProps) => props.title.length);
     const Enhanced2 = enhancer2(InnerComponent);
     const rendered2 = (
         <Enhanced2
@@ -343,33 +343,33 @@ function testWithReducer() {
 
 function testBranch() {
     interface InnerProps { count: number; update: () => void; }
-    interface OutterProps { toggled: boolean }
+    interface OuterProps { toggled: boolean }
 
     const innerComponent: React.StatelessComponent<InnerProps> = (props: InnerProps) =>
       <div onClick={() => props.update()}>{props.count}</div>;
     const innerComponent2 = () => <div>Hello</div>;
 
     const enhancer = branch(
-      (props: OutterProps) => props.toggled,
+      (props: OuterProps) => props.toggled,
       withState("count", "update", 0),
       withState("count", "update", 100)
     );
     const enhancer2 = branch(
-      (props: OutterProps) => props.toggled,
+      (props: OuterProps) => props.toggled,
       renderComponent(innerComponent),
     )
-    const enhanced: React.ComponentClass<OutterProps> = enhancer(innerComponent);
-    const enhanced2: React.ComponentClass<OutterProps> = enhancer2(innerComponent);
+    const enhanced: React.ComponentClass<OuterProps> = enhancer(innerComponent);
+    const enhanced2: React.ComponentClass<OuterProps> = enhancer2(innerComponent);
 }
 
 function testRenderComponent() {
     interface InnerProps { count: number; update: () => void; }
-    interface OutterProps { toggled: boolean }
+    interface OuterProps { toggled: boolean }
 
     const innerComponent = () => <div>Hello</div>;
 
     const enhancer = renderComponent(() => <span>Nop!</span>);
-    const enhanced: React.ComponentClass<OutterProps> = enhancer(innerComponent);
+    const enhanced: React.ComponentClass<OuterProps> = enhancer(innerComponent);
 }
 
 function testWithObservableConfig() {
